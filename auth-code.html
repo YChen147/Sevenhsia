@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        #code {
+            font-family: Arial, 宋体;
+            font-style: italic;
+            color: green;
+            border: 0;
+            padding: 2px 3px;
+            letter-spacing: 3px;
+            font-weight: bolder;
+            font-size: large;
+            background: linear-gradient(to right, #000, #fff);
+        }
+
+        .title {
+            margin: 20px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            flex-wrap: nowrap;
+        }
+
+        .title p {
+            height: 100%;
+            width: 10%;
+            border-left: 6px solid #0073fc;
+        }
+
+        .title p::before {
+            display: inline-block;
+            margin-left: 4px;
+            margin-right: 10px;
+            content: '';
+            width: 2px;
+            background-color: #fb0311;
+            height: 21px;
+            vertical-align: bottom;
+        }
+
+        .title div {
+            width: 100%;
+            height: 10px;
+            background-color: #f1f2f7;
+        }
+
+        .form {
+            padding: 5px 80px;
+        }
+
+        .form div {
+            margin-bottom: 10px;
+            height: 100%;
+        }
+
+        .verify {
+            font-size: 20px;
+            vertical-align: middle;
+            color: red;
+        }
+
+        .ipt {
+            margin-left: 10px;
+            margin-right: 14px;
+            padding-left: 8px;
+            height: 28px;
+            width: 240px;
+            border: 1px solid #dcdfe6;
+            border-radius: 6px;
+            outline: #3e82c7;
+            font-size: 16px;
+            color: #30316e;
+        }
+
+        .ipt[id] {
+            width: 50px;
+        }
+
+        button {
+            padding: 6px 10px;
+            margin-right: 8px;
+            width: 60px;
+            height: 100%;
+            background-color: #1b65b9;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #3e82c7;
+            cursor: pointer;
+        }
+
+        .iframeTag {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">
+        <p>查询条件</p>
+        <div></div>
+    </div>
+    <div class="form">
+        <div>
+            <label for=""><span class="verify">﹡</span>授权码:<input class="ipt accredit" type="text" required></label>
+            <button onclick="validate()">查询</button><button onclick="resetFn()">重置</button>
+        </div>
+        <div>
+            <label for=""><span class="verify">﹡</span>验证码:<input class="ipt" id="input" type="text" required></label>
+            <input type="button" id="code" onclick="createCode()" style="width:120px;height: 40px;" title='点击更换验证码' />
+            <!-- <input type="button" value="验证" onclick="validate()" /> -->
+        </div>
+    </div>
+    <div class="title">
+        <p>验真结果</p>
+        <div></div>
+    </div>
+
+    <iframe class="iframeTag" src="./历年社保证明.pdf" width="100%" height="350px" frameborder="2"></iframe>
+
+    <script>
+        let code; //在全局定义验证码  
+
+        function createCode() {
+            code = "";
+            const codeLength = 4;//验证码的长度  
+            const checkCode = document.getElementById("code");
+            
+            const random = new Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z');//随机数  
+            for (let i = 0; i < codeLength; i++) {//循环操作  
+                const index = Math.floor(Math.random() * 36);//取得随机数的索引（0~35）  
+                code += random[index];//根据索引取得随机数加到code上  
+            }
+            checkCode.value = code;//把code值赋给验证码  
+            checkCode.style.color=getRandomColor()
+        }
+        //校验
+        function validate() {
+            const inputCode = document.getElementById("input").value.toUpperCase(); //取得输入的验证码并转化为大写     
+            const accreditCode = document.querySelector('.accredit').value
+            console.log(accreditCode);
+
+            if (accreditCode.length <= 0) {
+                alert("请输入授权码！");
+            } else if (inputCode.length <= 0) { //若输入的验证码长度为0  
+                alert("请输入验证码！"); //则弹出请输入验证码  
+            } else if (inputCode != code) { //若输入的验证码与产生的验证码不一致时  
+                alert("验证码输入错误！@_@"); //则弹出验证码输入错误  
+                createCode();//刷新验证码  
+                document.getElementById("input").value = "";//清空文本框  
+            } else { //输入正确时  
+                // alert("合格！^-^");
+                if (accreditCode.trim() === '2024 1011 1634 50MJ LGY8') {
+                    document.querySelector('.iframeTag').style.display = 'block'
+                } else {
+                    alert("根据此授权码未能查询到打印记录");
+                    document.querySelector('.iframeTag').style.display = 'none'
+                }
+            }
+        }
+        // 随机颜色
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+
+        function resetFn() {
+            const ipts = document.querySelectorAll('.ipt')
+            ipts.forEach(item => {
+                item.value = ''
+            })
+            document.querySelector('.iframeTag').style.display = 'none'
+        }
+        createCode()
+    </script>
+</body>
+
+</html>
